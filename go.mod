@@ -1,4 +1,4 @@
-module github.com/unrotten/sqlex/v2
+module github.com/unrotten/sqlex
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
