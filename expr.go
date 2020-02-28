@@ -1,4 +1,4 @@
-package squirrel
+package sqlex
 
 import (
 	"bytes"
@@ -210,6 +210,18 @@ func (eq Eq) toSQL(useNotOpr bool) (sql string, args []interface{}, err error) {
 
 func (eq Eq) ToSql() (sql string, args []interface{}, err error) {
 	return eq.toSQL(false)
+}
+
+type IF struct {
+	condition bool
+	sq        Sqlizer
+}
+
+func (ifeq IF) ToSql() (string, []interface{}, error) {
+	if ifeq.condition {
+		return ifeq.sq.ToSql()
+	}
+	return "", nil, nil
 }
 
 // NotEq is syntactic sugar for use with Where/Having/Set methods.

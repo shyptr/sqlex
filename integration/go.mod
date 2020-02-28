@@ -1,4 +1,4 @@
-module github.com/Masterminds/squirrel/integration
+module github.com/unrotten/sqlex/integration
 
 go 1.12
 

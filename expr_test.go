@@ -1,4 +1,4 @@
-package squirrel
+package sqlex
 
 import (
 	"database/sql"
@@ -57,6 +57,30 @@ func TestEqInToSql(t *testing.T) {
 
 	expectedArgs := []interface{}{1, 2, 3}
 	assert.Equal(t, expectedArgs, args)
+}
+
+func TestIF_ToSql(t *testing.T) {
+	condition := "a" != ""
+	sql, args, err := IF{condition, Select("*").From("user").Where(IF{false, Eq{"id": 1}}).
+		Where(IF{true, Eq{"username": "unrotten"}})}.ToSql()
+	if err != noSql {
+		assert.NoError(t, err)
+	}
+
+	expectedSql := "SELECT * FROM user WHERE username = ?"
+	assert.Equal(t, expectedSql, sql)
+
+	expectedArgs := []interface{}{"unrotten"}
+	assert.Equal(t, expectedArgs, args)
+}
+
+func TestIFEmptyToSql(t *testing.T) {
+	sql, args, err := IF{}.ToSql()
+	assert.NoError(t, err)
+
+	expectedSql := ""
+	assert.Equal(t, expectedSql, sql)
+	assert.Empty(t, args)
 }
 
 func TestNotEqToSql(t *testing.T) {

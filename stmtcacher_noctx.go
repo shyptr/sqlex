@@ -1,6 +1,6 @@
 // +build !go1.8
 
-package squirrel
+package sqlex
 
 import (
 	"database/sql"

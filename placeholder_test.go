@@ -1,4 +1,4 @@
-package squirrel
+package sqlex
 
 import (
 	"strings"

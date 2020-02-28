@@ -1,6 +1,7 @@
-package squirrel
+package sqlex
 
 import (
+	"errors"
 	"fmt"
 	"io"
 )
@@ -29,27 +30,47 @@ func (p part) ToSql() (sql string, args []interface{}, err error) {
 	return
 }
 
-func appendToSql(parts []Sqlizer, w io.Writer, sep string, args []interface{}) ([]interface{}, error) {
-	for i, p := range parts {
-		partSql, partArgs, err := p.ToSql()
-		if err != nil {
-			return nil, err
-		} else if len(partSql) == 0 {
-			continue
-		}
+var noSql = errors.New("there is non sqlStr from toSql()")
 
-		if i > 0 {
-			_, err := io.WriteString(w, sep)
-			if err != nil {
+func appendToSql(parts []Sqlizer, w io.Writer, sep string, args []interface{}) ([]interface{}, error) {
+	build := func(b Sqlizer) (err error) {
+		baseSql, baseArgs, err := b.ToSql()
+		if err != nil {
+			return err
+		}
+		if baseSql == "" {
+			return noSql
+		}
+		_, err = io.WriteString(w, baseSql)
+		if err != nil {
+			return
+		}
+		args = append(args, baseArgs...)
+		return
+	}
+	var skip bool
+	if err := build(parts[0]); err != nil {
+		if err == noSql {
+			skip = true
+		} else {
+			return nil, err
+		}
+	}
+	for _, part := range parts[1:] {
+		if !skip {
+			if _, err := io.WriteString(w, sep); err != nil {
+				return nil, err
+			}
+		} else {
+			skip = false
+		}
+		if err := build(part); err != nil {
+			if err == noSql {
+				skip = true
+			} else {
 				return nil, err
 			}
 		}
-
-		_, err = io.WriteString(w, partSql)
-		if err != nil {
-			return nil, err
-		}
-		args = append(args, partArgs...)
 	}
 	return args, nil
 }
