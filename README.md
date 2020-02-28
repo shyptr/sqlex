@@ -1,26 +1,26 @@
 [![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](https://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
-### Squirrel is "complete".
-Bug fixes will still be merged (slowly). Bug reports are welcome, but I will not necessarily respond to them. If another fork (or substantially similar project) actively improves on what Squirrel does, let me know and I may link to it here.
+
+sqlex is forks from [Squirrel](github.com/Masterminds/squirrel)
 
 
-# Squirrel - fluent SQL generator for Go
+# sqlex - fluent SQL generator for Go
 
 ```go
-import "github.com/Masterminds/squirrel"
+import "github.com/unrotten/sqlex"
 ```
 
 
-[![GoDoc](https://godoc.org/github.com/Masterminds/squirrel?status.png)](https://godoc.org/github.com/Masterminds/squirrel)
-[![Build Status](https://api.travis-ci.org/Masterminds/squirrel.svg?branch=master)](https://travis-ci.org/Masterminds/squirrel)
+[![GoDoc](https://godoc.org/github.com/unrotten/sqlex?status.png)](https://godoc.org/github.com/unrotten/sqlex)
+[![Build Status](https://api.travis-ci.org/unrotten/sqlex.svg?branch=master)](https://travis-ci.org/unrotten/sqlex)
 
-**Squirrel is not an ORM.** For an application of Squirrel, check out
+**sqlex is not an ORM.** For an application of sqlex, check out
 [structable, a table-struct mapper](https://github.com/Masterminds/structable)
 
 
-Squirrel helps you build SQL queries from composable parts:
+sqlex helps you build SQL queries from composable parts:
 
 ```go
-import sq "github.com/Masterminds/squirrel"
+import sq "github.com/unrotten/sqlex"
 
 users := sq.Select("*").From("users").Join("emails USING (email_id)")
 
@@ -40,7 +40,7 @@ sql, args, err := sq.
 sql == "INSERT INTO users (name,age) VALUES (?,?),(?,? + 5)"
 ```
 
-Squirrel can also execute queries directly:
+sqlex can also execute queries directly:
 
 ```go
 stooges := users.Where(sq.Eq{"username": []string{"moe", "larry", "curly", "shemp"}})
@@ -52,7 +52,7 @@ rows, err := db.Query("SELECT * FROM users WHERE username IN (?,?,?,?) LIMIT 3",
                       "moe", "larry", "curly", "shemp")
 ```
 
-Squirrel makes conditional query building a breeze:
+sqlex makes conditional query building a breeze:
 
 ```go
 if len(q) > 0 {
@@ -60,7 +60,7 @@ if len(q) > 0 {
 }
 ```
 
-Squirrel wants to make your life easier:
+sqlex wants to make your life easier:
 
 ```go
 // StmtCache caches Prepared Stmts for you
@@ -71,7 +71,7 @@ mydb := sq.StatementBuilder.RunWith(dbCache)
 select_users := mydb.Select("*").From("users")
 ```
 
-Squirrel loves PostgreSQL:
+sqlex loves PostgreSQL:
 
 ```go
 psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
@@ -79,7 +79,7 @@ psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 // You use question marks for placeholders...
 sql, _, _ := psql.Select("*").From("elephants").Where("name IN (?,?)", "Dumbo", "Verna").ToSql()
 
-/// ...squirrel replaces them using PlaceholderFormat.
+/// ...sqlex replaces them using PlaceholderFormat.
 sql == "SELECT * FROM elephants WHERE name IN ($1,$2)"
 
 
@@ -108,9 +108,9 @@ SELECT * FROM nodes WHERE meta->'format' ?| array[$1,$2]
 
 ## FAQ
 
-* **How can I build an IN query on composite keys / tuples, e.g. `WHERE (col1, col2) IN ((1,2),(3,4))`? ([#104](https://github.com/Masterminds/squirrel/issues/104))**
+* **How can I build an IN query on composite keys / tuples, e.g. `WHERE (col1, col2) IN ((1,2),(3,4))`? ([#104](https://github.com/unrotten/sqlex/issues/104))**
 
-    Squirrel does not explicitly support tuples, but you can get the same effect with e.g.:
+    sqlex does not explicitly support tuples, but you can get the same effect with e.g.:
 
     ```go
     sq.Or{
@@ -122,9 +122,19 @@ SELECT * FROM nodes WHERE meta->'format' ?| array[$1,$2]
     WHERE (col1 = 1 AND col2 = 2) OR (col1 = 3 AND col2 = 4)
     ```
 
+    and I add IF condition into this application,so we can use like with e.g:
+    
+    ```go
+    sq.IF{"a"!="",sq.Eq{"col1":1}}.IF{1==0,sq.Eq{"col2":2}}
+    ```
+  
+    ```sql
+    WHERE col1 = 1
+    ```
+    
     (which should produce the same query plan as the tuple version)
 
-* **Why doesn't `Eq{"mynumber": []uint8{1,2,3}}` turn into an `IN` query? ([#114](https://github.com/Masterminds/squirrel/issues/114))**
+* **Why doesn't `Eq{"mynumber": []uint8{1,2,3}}` turn into an `IN` query? ([#114](https://github.com/unrotten/sqlex/issues/114))**
 
     Values of type `[]byte` are handled specially by `database/sql`. In Go, [`byte` is just an alias of `uint8`](https://golang.org/pkg/builtin/#byte), so there is no way to distinguish `[]uint8` from `[]byte`.
 
@@ -138,5 +148,5 @@ SELECT * FROM nodes WHERE meta->'format' ?| array[$1,$2]
 
 ## License
 
-Squirrel is released under the
+sqlex is released under the
 [MIT License](http://www.opensource.org/licenses/MIT).
