@@ -15,13 +15,13 @@ import (
 type insertData struct {
 	PlaceholderFormat PlaceholderFormat
 	RunWith           BaseRunner
-	Prefixes          []Sqlizer
+	Prefixes          []Sqlex
 	StatementKeyword  string
 	Options           []string
 	Into              string
 	Columns           []string
 	Values            [][]interface{}
-	Suffixes          []Sqlizer
+	Suffixes          []Sqlex
 	Select            *SelectBuilder
 }
 
@@ -125,7 +125,7 @@ func (d *insertData) appendValuesToSQL(w io.Writer, args []interface{}) ([]inter
 	for r, row := range d.Values {
 		valueStrings := make([]string, len(row))
 		for v, val := range row {
-			if vs, ok := val.(Sqlizer); ok {
+			if vs, ok := val.(Sqlex); ok {
 				vsql, vargs, err := vs.ToSql()
 				if err != nil {
 					return nil, err
@@ -222,7 +222,7 @@ func (b InsertBuilder) Prefix(sql string, args ...interface{}) InsertBuilder {
 }
 
 // PrefixExpr adds an expression to the very beginning of the query
-func (b InsertBuilder) PrefixExpr(expr Sqlizer) InsertBuilder {
+func (b InsertBuilder) PrefixExpr(expr Sqlex) InsertBuilder {
 	return builder.Append(b, "Prefixes", expr).(InsertBuilder)
 }
 
@@ -252,7 +252,7 @@ func (b InsertBuilder) Suffix(sql string, args ...interface{}) InsertBuilder {
 }
 
 // SuffixExpr adds an expression to the end of the query
-func (b InsertBuilder) SuffixExpr(expr Sqlizer) InsertBuilder {
+func (b InsertBuilder) SuffixExpr(expr Sqlex) InsertBuilder {
 	return builder.Append(b, "Suffixes", expr).(InsertBuilder)
 }
 

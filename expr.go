@@ -31,7 +31,7 @@ func Expr(sql string, args ...interface{}) expr {
 func (e expr) ToSql() (sql string, args []interface{}, err error) {
 	simple := true
 	for _, arg := range e.args {
-		if _, ok := arg.(Sqlizer); ok {
+		if _, ok := arg.(Sqlex); ok {
 			simple = false
 		}
 	}
@@ -59,7 +59,7 @@ func (e expr) ToSql() (sql string, args []interface{}, err error) {
 			continue
 		}
 
-		if as, ok := ap[0].(Sqlizer); ok {
+		if as, ok := ap[0].(Sqlex); ok {
 			// sqlizer argument; expand it and append the result
 			isql, iargs, err = as.ToSql()
 			buf.WriteString(sp[:i])
@@ -88,7 +88,7 @@ func (ce concatExpr) ToSql() (sql string, args []interface{}, err error) {
 		switch p := part.(type) {
 		case string:
 			sql += p
-		case Sqlizer:
+		case Sqlex:
 			pSql, pArgs, err := p.ToSql()
 			if err != nil {
 				return "", nil, err
@@ -96,7 +96,7 @@ func (ce concatExpr) ToSql() (sql string, args []interface{}, err error) {
 			sql += pSql
 			args = append(args, pArgs...)
 		default:
-			return "", nil, fmt.Errorf("%#v is not a string or Sqlizer", part)
+			return "", nil, fmt.Errorf("%#v is not a string or Sqlex", part)
 		}
 	}
 	return
@@ -113,7 +113,7 @@ func ConcatExpr(parts ...interface{}) concatExpr {
 
 // aliasExpr helps to alias part of SQL query generated with underlying "expr"
 type aliasExpr struct {
-	expr  Sqlizer
+	expr  Sqlex
 	alias string
 }
 
@@ -121,7 +121,7 @@ type aliasExpr struct {
 // defined as complex expression like IF or CASE
 // Ex:
 //		.Column(Alias(caseStmt, "case_column"))
-func Alias(expr Sqlizer, alias string) aliasExpr {
+func Alias(expr Sqlex, alias string) aliasExpr {
 	return aliasExpr{expr, alias}
 }
 
@@ -214,7 +214,7 @@ func (eq Eq) ToSql() (sql string, args []interface{}, err error) {
 
 type IF struct {
 	condition bool
-	sq        Sqlizer
+	sq        Sqlex
 }
 
 func (ifeq IF) ToSql() (string, []interface{}, error) {
@@ -378,7 +378,7 @@ func (gtOrEq GtOrEq) ToSql() (sql string, args []interface{}, err error) {
 	return Lt(gtOrEq).toSql(true, true)
 }
 
-type conj []Sqlizer
+type conj []Sqlex
 
 func (c conj) join(sep, defaultExpr string) (sql string, args []interface{}, err error) {
 	if len(c) == 0 {

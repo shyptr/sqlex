@@ -9,7 +9,7 @@ import (
 )
 
 func TestWherePartsAppendToSql(t *testing.T) {
-	parts := []Sqlizer{
+	parts := []Sqlex{
 		newWherePart("x = ?", 1),
 		newWherePart(nil),
 		newWherePart(Eq{"y": 2}),
@@ -21,7 +21,7 @@ func TestWherePartsAppendToSql(t *testing.T) {
 }
 
 func TestWherePartsAppendToSqlErr(t *testing.T) {
-	parts := []Sqlizer{newWherePart(1)}
+	parts := []Sqlex{newWherePart(1)}
 	_, err := appendToSql(parts, &bytes.Buffer{}, "", []interface{}{})
 	assert.Error(t, err)
 }

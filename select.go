@@ -12,18 +12,18 @@ import (
 type selectData struct {
 	PlaceholderFormat PlaceholderFormat
 	RunWith           BaseRunner
-	Prefixes          []Sqlizer
+	Prefixes          []Sqlex
 	Options           []string
-	Columns           []Sqlizer
-	From              Sqlizer
-	Joins             []Sqlizer
-	WhereParts        []Sqlizer
+	Columns           []Sqlex
+	From              Sqlex
+	Joins             []Sqlex
+	WhereParts        []Sqlex
 	GroupBys          []string
-	HavingParts       []Sqlizer
-	OrderByParts      []Sqlizer
+	HavingParts       []Sqlex
+	OrderByParts      []Sqlex
 	Limit             string
 	Offset            string
-	Suffixes          []Sqlizer
+	Suffixes          []Sqlex
 }
 
 func (d *selectData) Exec() (sql.Result, error) {
@@ -98,7 +98,7 @@ func (d *selectData) toSql() (sqlStr string, args []interface{}, err error) {
 
 	if d.From != nil {
 		sql.WriteString(" FROM ")
-		args, err = appendToSql([]Sqlizer{d.From}, sql, "", args)
+		args, err = appendToSql([]Sqlex{d.From}, sql, "", args)
 		if err != nil {
 			return
 		}
@@ -238,7 +238,7 @@ func (b SelectBuilder) Prefix(sql string, args ...interface{}) SelectBuilder {
 }
 
 // PrefixExpr adds an expression to the very beginning of the query
-func (b SelectBuilder) PrefixExpr(expr Sqlizer) SelectBuilder {
+func (b SelectBuilder) PrefixExpr(expr Sqlex) SelectBuilder {
 	return builder.Append(b, "Prefixes", expr).(SelectBuilder)
 }
 
@@ -380,6 +380,6 @@ func (b SelectBuilder) Suffix(sql string, args ...interface{}) SelectBuilder {
 }
 
 // SuffixExpr adds an expression to the end of the query
-func (b SelectBuilder) SuffixExpr(expr Sqlizer) SelectBuilder {
+func (b SelectBuilder) SuffixExpr(expr Sqlex) SelectBuilder {
 	return builder.Append(b, "Suffixes", expr).(SelectBuilder)
 }

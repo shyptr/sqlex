@@ -12,13 +12,13 @@ import (
 type deleteData struct {
 	PlaceholderFormat PlaceholderFormat
 	RunWith           BaseRunner
-	Prefixes          []Sqlizer
+	Prefixes          []Sqlex
 	From              string
-	WhereParts        []Sqlizer
+	WhereParts        []Sqlex
 	OrderBys          []string
 	Limit             string
 	Offset            string
-	Suffixes          []Sqlizer
+	Suffixes          []Sqlex
 }
 
 func (d *deleteData) Exec() (sql.Result, error) {
@@ -127,7 +127,7 @@ func (b DeleteBuilder) Prefix(sql string, args ...interface{}) DeleteBuilder {
 }
 
 // PrefixExpr adds an expression to the very beginning of the query
-func (b DeleteBuilder) PrefixExpr(expr Sqlizer) DeleteBuilder {
+func (b DeleteBuilder) PrefixExpr(expr Sqlex) DeleteBuilder {
 	return builder.Append(b, "Prefixes", expr).(DeleteBuilder)
 }
 
@@ -164,7 +164,7 @@ func (b DeleteBuilder) Suffix(sql string, args ...interface{}) DeleteBuilder {
 }
 
 // SuffixExpr adds an expression to the end of the query
-func (b DeleteBuilder) SuffixExpr(expr Sqlizer) DeleteBuilder {
+func (b DeleteBuilder) SuffixExpr(expr Sqlex) DeleteBuilder {
 	return builder.Append(b, "Suffixes", expr).(DeleteBuilder)
 }
 

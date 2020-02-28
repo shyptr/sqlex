@@ -69,7 +69,7 @@ func (r *stdsqlCtxRunner) QueryRowContext(ctx context.Context, query string, arg
 }
 
 // ExecContextWith ExecContexts the SQL returned by s with db.
-func ExecContextWith(ctx context.Context, db ExecerContext, s Sqlizer) (res sql.Result, err error) {
+func ExecContextWith(ctx context.Context, db ExecerContext, s Sqlex) (res sql.Result, err error) {
 	query, args, err := s.ToSql()
 	if err != nil {
 		return
@@ -78,7 +78,7 @@ func ExecContextWith(ctx context.Context, db ExecerContext, s Sqlizer) (res sql.
 }
 
 // QueryContextWith QueryContexts the SQL returned by s with db.
-func QueryContextWith(ctx context.Context, db QueryerContext, s Sqlizer) (rows *sql.Rows, err error) {
+func QueryContextWith(ctx context.Context, db QueryerContext, s Sqlex) (rows *sql.Rows, err error) {
 	query, args, err := s.ToSql()
 	if err != nil {
 		return
@@ -87,7 +87,7 @@ func QueryContextWith(ctx context.Context, db QueryerContext, s Sqlizer) (rows *
 }
 
 // QueryRowContextWith QueryRowContexts the SQL returned by s with db.
-func QueryRowContextWith(ctx context.Context, db QueryRowerContext, s Sqlizer) RowScanner {
+func QueryRowContextWith(ctx context.Context, db QueryRowerContext, s Sqlex) RowScanner {
 	query, args, err := s.ToSql()
 	return &Row{RowScanner: db.QueryRowContext(ctx, query, args...), err: err}
 }

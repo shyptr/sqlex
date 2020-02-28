@@ -192,7 +192,7 @@ func TestGtOrEqToSql(t *testing.T) {
 }
 
 func TestExprNilToSql(t *testing.T) {
-	var b Sqlizer
+	var b Sqlex
 	b = NotEq{"name": nil}
 	sql, args, err := b.ToSql()
 	assert.NoError(t, err)
@@ -211,7 +211,7 @@ func TestExprNilToSql(t *testing.T) {
 }
 
 func TestNullTypeString(t *testing.T) {
-	var b Sqlizer
+	var b Sqlex
 	var name sql.NullString
 
 	b = Eq{"name": name}

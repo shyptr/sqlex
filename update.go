@@ -13,14 +13,14 @@ import (
 type updateData struct {
 	PlaceholderFormat PlaceholderFormat
 	RunWith           BaseRunner
-	Prefixes          []Sqlizer
+	Prefixes          []Sqlex
 	Table             string
 	SetClauses        []setClause
-	WhereParts        []Sqlizer
+	WhereParts        []Sqlex
 	OrderBys          []string
 	Limit             string
 	Offset            string
-	Suffixes          []Sqlizer
+	Suffixes          []Sqlex
 }
 
 type setClause struct {
@@ -81,7 +81,7 @@ func (d *updateData) ToSql() (sqlStr string, args []interface{}, err error) {
 	setSqls := make([]string, len(d.SetClauses))
 	for i, setClause := range d.SetClauses {
 		var valSql string
-		if vs, ok := setClause.value.(Sqlizer); ok {
+		if vs, ok := setClause.value.(Sqlex); ok {
 			vsql, vargs, err := vs.ToSql()
 			if err != nil {
 				return "", nil, err
@@ -189,7 +189,7 @@ func (b UpdateBuilder) Prefix(sql string, args ...interface{}) UpdateBuilder {
 }
 
 // PrefixExpr adds an expression to the very beginning of the query
-func (b UpdateBuilder) PrefixExpr(expr Sqlizer) UpdateBuilder {
+func (b UpdateBuilder) PrefixExpr(expr Sqlex) UpdateBuilder {
 	return builder.Append(b, "Prefixes", expr).(UpdateBuilder)
 }
 
@@ -247,6 +247,6 @@ func (b UpdateBuilder) Suffix(sql string, args ...interface{}) UpdateBuilder {
 }
 
 // SuffixExpr adds an expression to the end of the query
-func (b UpdateBuilder) SuffixExpr(expr Sqlizer) UpdateBuilder {
+func (b UpdateBuilder) SuffixExpr(expr Sqlex) UpdateBuilder {
 	return builder.Append(b, "Suffixes", expr).(UpdateBuilder)
 }

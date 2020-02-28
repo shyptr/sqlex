@@ -6,7 +6,7 @@ import (
 
 type wherePart part
 
-func newWherePart(pred interface{}, args ...interface{}) Sqlizer {
+func newWherePart(pred interface{}, args ...interface{}) Sqlex {
 	return &wherePart{pred: pred, args: args}
 }
 
@@ -16,7 +16,7 @@ func (p wherePart) ToSql() (sql string, args []interface{}, err error) {
 		// no-op
 	case rawSqlizer:
 		return pred.toSqlRaw()
-	case Sqlizer:
+	case Sqlex:
 		return pred.ToSql()
 	case map[string]interface{}:
 		return Eq(pred).ToSql()

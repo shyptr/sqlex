@@ -12,15 +12,15 @@ import (
 	"github.com/lann/builder"
 )
 
-// Sqlizer is the interface that wraps the ToSql method.
+// Sqlex is the interface that wraps the ToSql method.
 //
-// ToSql returns a SQL representation of the Sqlizer, along with a slice of args
+// ToSql returns a SQL representation of the Sqlex, along with a slice of args
 // as passed to e.g. database/sql.Exec. It can also return an error.
-type Sqlizer interface {
+type Sqlex interface {
 	ToSql() (string, []interface{}, error)
 }
 
-// rawSqlizer is expected to do what Sqlizer does, but without finalizing placeholders.
+// rawSqlizer is expected to do what Sqlex does, but without finalizing placeholders.
 // This is useful for nested queries.
 type rawSqlizer interface {
 	toSqlRaw() (string, []interface{}, error)
@@ -99,7 +99,7 @@ var RunnerNotSet = fmt.Errorf("cannot run; no Runner set (RunWith)")
 var RunnerNotQueryRunner = fmt.Errorf("cannot QueryRow; Runner is not a QueryRower")
 
 // ExecWith Execs the SQL returned by s with db.
-func ExecWith(db Execer, s Sqlizer) (res sql.Result, err error) {
+func ExecWith(db Execer, s Sqlex) (res sql.Result, err error) {
 	query, args, err := s.ToSql()
 	if err != nil {
 		return
@@ -108,7 +108,7 @@ func ExecWith(db Execer, s Sqlizer) (res sql.Result, err error) {
 }
 
 // QueryWith Querys the SQL returned by s with db.
-func QueryWith(db Queryer, s Sqlizer) (rows *sql.Rows, err error) {
+func QueryWith(db Queryer, s Sqlex) (rows *sql.Rows, err error) {
 	query, args, err := s.ToSql()
 	if err != nil {
 		return
@@ -117,7 +117,7 @@ func QueryWith(db Queryer, s Sqlizer) (rows *sql.Rows, err error) {
 }
 
 // QueryRowWith QueryRows the SQL returned by s with db.
-func QueryRowWith(db QueryRower, s Sqlizer) RowScanner {
+func QueryRowWith(db QueryRower, s Sqlex) RowScanner {
 	query, args, err := s.ToSql()
 	return &Row{RowScanner: db.QueryRow(query, args...), err: err}
 }
@@ -131,7 +131,7 @@ func QueryRowWith(db QueryRower, s Sqlizer) RowScanner {
 // debugging. While the string result *might* be valid SQL, this function does
 // not try very hard to ensure it. Additionally, executing the output of this
 // function with any untrusted user input is certainly insecure.
-func DebugSqlizer(s Sqlizer) string {
+func DebugSqlizer(s Sqlex) string {
 	sql, args, err := s.ToSql()
 	if err != nil {
 		return fmt.Sprintf("[ToSql error: %s]", err)

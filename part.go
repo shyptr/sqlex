@@ -11,7 +11,7 @@ type part struct {
 	args []interface{}
 }
 
-func newPart(pred interface{}, args ...interface{}) Sqlizer {
+func newPart(pred interface{}, args ...interface{}) Sqlex {
 	return &part{pred, args}
 }
 
@@ -19,21 +19,21 @@ func (p part) ToSql() (sql string, args []interface{}, err error) {
 	switch pred := p.pred.(type) {
 	case nil:
 		// no-op
-	case Sqlizer:
+	case Sqlex:
 		sql, args, err = pred.ToSql()
 	case string:
 		sql = pred
 		args = p.args
 	default:
-		err = fmt.Errorf("expected string or Sqlizer, not %T", pred)
+		err = fmt.Errorf("expected string or Sqlex, not %T", pred)
 	}
 	return
 }
 
 var noSql = errors.New("there is non sqlStr from toSql()")
 
-func appendToSql(parts []Sqlizer, w io.Writer, sep string, args []interface{}) ([]interface{}, error) {
-	build := func(b Sqlizer) (err error) {
+func appendToSql(parts []Sqlex, w io.Writer, sep string, args []interface{}) ([]interface{}, error) {
+	build := func(b Sqlex) (err error) {
 		baseSql, baseArgs, err := b.ToSql()
 		if err != nil {
 			return err

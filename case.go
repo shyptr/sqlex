@@ -12,15 +12,15 @@ func init() {
 }
 
 // sqlizerBuffer is a helper that allows to write many Sqlizers one by one
-// without constant checks for errors that may come from Sqlizer
+// without constant checks for errors that may come from Sqlex
 type sqlizerBuffer struct {
 	bytes.Buffer
 	args []interface{}
 	err  error
 }
 
-// WriteSql converts Sqlizer to SQL strings and writes it to buffer
-func (b *sqlizerBuffer) WriteSql(item Sqlizer) {
+// WriteSql converts Sqlex to SQL strings and writes it to buffer
+func (b *sqlizerBuffer) WriteSql(item Sqlex) {
 	if b.err != nil {
 		return
 	}
@@ -44,8 +44,8 @@ func (b *sqlizerBuffer) ToSql() (string, []interface{}, error) {
 
 // whenPart is a helper structure to describe SQLs "WHEN ... THEN ..." expression
 type whenPart struct {
-	when Sqlizer
-	then Sqlizer
+	when Sqlex
+	then Sqlex
 }
 
 func newWhenPart(when interface{}, then interface{}) whenPart {
@@ -54,12 +54,12 @@ func newWhenPart(when interface{}, then interface{}) whenPart {
 
 // caseData holds all the data required to build a CASE SQL construct
 type caseData struct {
-	What      Sqlizer
+	What      Sqlex
 	WhenParts []whenPart
-	Else      Sqlizer
+	Else      Sqlex
 }
 
-// ToSql implements Sqlizer
+// ToSql implements Sqlex
 func (d *caseData) ToSql() (sqlStr string, args []interface{}, err error) {
 	if len(d.WhenParts) == 0 {
 		err = errors.New("case expression must contain at lease one WHEN clause")
