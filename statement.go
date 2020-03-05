@@ -1,6 +1,6 @@
 package sqlex
 
-import "github.com/lann/builder"
+import "github.com/unrotten/builder"
 
 // StatementBuilderType is the type of StatementBuilder.
 type StatementBuilderType builder.Builder

@@ -6,7 +6,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/lann/builder"
+	"github.com/unrotten/builder"
 )
 
 func (d *updateData) ExecContext(ctx context.Context) (sql.Result, error) {

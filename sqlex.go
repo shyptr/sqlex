@@ -7,10 +7,17 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
+	"io"
+	"log"
+	"os"
+	"runtime"
+	"strconv"
 	"strings"
 
-	"github.com/lann/builder"
+	"github.com/unrotten/builder"
 )
+
+var logger = log.New(os.Stdout, "sqlex:", log.LstdFlags)
 
 // Sqlex is the interface that wraps the ToSql method.
 //
@@ -78,6 +85,20 @@ type stdsqlRunner struct {
 	StdSql
 }
 
+func SetLogger(output io.Writer) {
+	logger = log.New(output, "sqlex:", log.LstdFlags)
+}
+
+func info(msg string) {
+	_, file, line, ok := runtime.Caller(2)
+	if !ok {
+		log.Println(msg)
+		return
+	}
+	log.Println(file + ":" + strconv.Itoa(line))
+	log.Println(msg)
+}
+
 func (r *stdsqlRunner) QueryRow(query string, args ...interface{}) RowScanner {
 	return r.StdSql.QueryRow(query, args...)
 }
@@ -104,6 +125,7 @@ func ExecWith(db Execer, s Sqlex) (res sql.Result, err error) {
 	if err != nil {
 		return
 	}
+	info(fmt.Sprintf("query:%s\nargs:%v", query, args))
 	return db.Exec(query, args...)
 }
 
@@ -113,12 +135,16 @@ func QueryWith(db Queryer, s Sqlex) (rows *sql.Rows, err error) {
 	if err != nil {
 		return
 	}
+	info(fmt.Sprintf("query:%s\nargs:%v", query, args))
 	return db.Query(query, args...)
 }
 
 // QueryRowWith QueryRows the SQL returned by s with db.
 func QueryRowWith(db QueryRower, s Sqlex) RowScanner {
 	query, args, err := s.ToSql()
+	if err != nil {
+		info(fmt.Sprintf("query:%s\nargs:%v", query, args))
+	}
 	return &Row{RowScanner: db.QueryRow(query, args...), err: err}
 }
 
@@ -136,7 +162,6 @@ func DebugSqlizer(s Sqlex) string {
 	if err != nil {
 		return fmt.Sprintf("[ToSql error: %s]", err)
 	}
-
 	var placeholder string
 	downCast, ok := s.(placeholderDebugger)
 	if !ok {
