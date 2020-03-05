@@ -213,13 +213,13 @@ func (eq Eq) ToSql() (sql string, args []interface{}, err error) {
 }
 
 type IF struct {
-	condition bool
-	sq        Sqlex
+	Condition bool
+	Sq        Sqlex
 }
 
 func (ifeq IF) ToSql() (string, []interface{}, error) {
-	if ifeq.condition {
-		return ifeq.sq.ToSql()
+	if ifeq.Condition {
+		return ifeq.Sq.ToSql()
 	}
 	return "", nil, nil
 }
@@ -283,7 +283,7 @@ func (nlk NotLike) ToSql() (sql string, args []interface{}, err error) {
 
 // ILike is syntactic sugar for use with ILIKE conditions.
 // Ex:
-//    .Where(ILike{"name": "sq%"})
+//    .Where(ILike{"name": "Sq%"})
 type ILike Like
 
 func (ilk ILike) ToSql() (sql string, args []interface{}, err error) {
@@ -292,7 +292,7 @@ func (ilk ILike) ToSql() (sql string, args []interface{}, err error) {
 
 // NotILike is syntactic sugar for use with ILIKE conditions.
 // Ex:
-//    .Where(NotILike{"name": "sq%"})
+//    .Where(NotILike{"name": "Sq%"})
 type NotILike Like
 
 func (nilk NotILike) ToSql() (sql string, args []interface{}, err error) {

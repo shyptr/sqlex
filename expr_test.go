@@ -386,26 +386,26 @@ func TestNotLikeToSql(t *testing.T) {
 }
 
 func TestILikeToSql(t *testing.T) {
-	b := ILike{"name": "sq%"}
+	b := ILike{"name": "Sq%"}
 	sql, args, err := b.ToSql()
 	assert.NoError(t, err)
 
 	expectedSql := "name ILIKE ?"
 	assert.Equal(t, expectedSql, sql)
 
-	expectedArgs := []interface{}{"sq%"}
+	expectedArgs := []interface{}{"Sq%"}
 	assert.Equal(t, expectedArgs, args)
 }
 
 func TestNotILikeToSql(t *testing.T) {
-	b := NotILike{"name": "sq%"}
+	b := NotILike{"name": "Sq%"}
 	sql, args, err := b.ToSql()
 	assert.NoError(t, err)
 
 	expectedSql := "name NOT ILIKE ?"
 	assert.Equal(t, expectedSql, sql)
 
-	expectedArgs := []interface{}{"sq%"}
+	expectedArgs := []interface{}{"Sq%"}
 	assert.Equal(t, expectedArgs, args)
 }
 
