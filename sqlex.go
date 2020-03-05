@@ -90,13 +90,12 @@ func SetLogger(output io.Writer) {
 }
 
 func info(msg string) {
-	_, file, line, ok := runtime.Caller(2)
+	_, file, line, ok := runtime.Caller(10)
 	if !ok {
 		log.Println(msg)
 		return
 	}
-	log.Println(file + ":" + strconv.Itoa(line))
-	log.Println(msg)
+	log.Println(file + ":" + strconv.Itoa(line) + msg)
 }
 
 func (r *stdsqlRunner) QueryRow(query string, args ...interface{}) RowScanner {
@@ -125,7 +124,7 @@ func ExecWith(db Execer, s Sqlex) (res sql.Result, err error) {
 	if err != nil {
 		return
 	}
-	info(fmt.Sprintf("query:%s\nargs:%v", query, args))
+	info(fmt.Sprintf("\nquery:%s\nargs:%v", query, args))
 	return db.Exec(query, args...)
 }
 
@@ -135,16 +134,14 @@ func QueryWith(db Queryer, s Sqlex) (rows *sql.Rows, err error) {
 	if err != nil {
 		return
 	}
-	info(fmt.Sprintf("query:%s\nargs:%v", query, args))
+	info(fmt.Sprintf("\nquery:%s\nargs:%v", query, args))
 	return db.Query(query, args...)
 }
 
 // QueryRowWith QueryRows the SQL returned by s with db.
 func QueryRowWith(db QueryRower, s Sqlex) RowScanner {
 	query, args, err := s.ToSql()
-	if err != nil {
-		info(fmt.Sprintf("query:%s\nargs:%v", query, args))
-	}
+	info(fmt.Sprintf("\nquery:%s\nargs:%v", query, args))
 	return &Row{RowScanner: db.QueryRow(query, args...), err: err}
 }
 
