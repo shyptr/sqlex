@@ -92,10 +92,10 @@ func SetLogger(output io.Writer) {
 func info(msg string) {
 	_, file, line, ok := runtime.Caller(3)
 	if !ok {
-		log.Println(msg)
+		logger.Println(msg)
 		return
 	}
-	log.Println(file + ":" + strconv.Itoa(line) + msg)
+	logger.Println(file + ":" + strconv.Itoa(line) + msg)
 }
 
 func (r *stdsqlRunner) QueryRow(query string, args ...interface{}) RowScanner {

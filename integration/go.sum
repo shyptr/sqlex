@@ -19,6 +19,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/unrotten/builder v0.0.0-20200305035231-6b812aec919b/go.mod h1:eh1aPjS3A9x4tpzgUi9VaQYBBcQv4PkCKmS+4Px4OcY=
+github.com/unrotten/sqlex v1.4.0/go.mod h1:tru+3Xad/+J0bsyBxlj2/DQgylUmrjR+tSKK6Yg9mWE=
+github.com/unrotten/sqlex v1.4.4/go.mod h1:vPArcKyfVknzvif0eP0aJtwo0Y2wAvajMVR4Zvg+E/Y=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/net v0.0.0-20190603091049-60506f45cf65/go.mod h1:HSz+uSET+XFnRR8LxR5pz3Of3rY3CfYBVs4xY44aLks=
 golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
