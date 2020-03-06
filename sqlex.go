@@ -15,7 +15,27 @@ import (
 	"time"
 )
 
-var logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
+var logger zerolog.Logger
+
+func init() {
+	var logOutPut = zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
+	logOutPut.FormatLevel = func(i interface{}) string {
+		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
+	}
+	logOutPut.FormatMessage = func(i interface{}) string {
+		if i != nil {
+			return fmt.Sprintf("***%s****\n", i)
+		}
+		return "\n"
+	}
+	logOutPut.FormatFieldName = func(i interface{}) string {
+		return fmt.Sprintf("%s:", i)
+	}
+	logOutPut.FormatFieldValue = func(i interface{}) string {
+		return fmt.Sprintf("%s\n", i)
+	}
+	logger = zerolog.New(logOutPut).With().Timestamp().Logger()
+}
 
 // Sqlex is the interface that wraps the ToSql method.
 //
@@ -98,7 +118,7 @@ func SetLogger(output io.Writer) {
 		return fmt.Sprintf("%s:", i)
 	}
 	logOutPut.FormatFieldValue = func(i interface{}) string {
-		return strings.ToUpper(fmt.Sprintf("%s\n", i))
+		return fmt.Sprintf("%s\n", i)
 	}
 	logger = zerolog.New(logOutPut).With().Timestamp().Logger()
 }

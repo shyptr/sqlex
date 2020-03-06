@@ -3,7 +3,6 @@ package sqlex
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"strings"
 	"testing"
 
@@ -62,7 +61,7 @@ func TestExecWith(t *testing.T) {
 }
 
 func TestSetLogger(t *testing.T) {
-	SetLogger(os.Stdout)
+	//SetLogger(os.Stdout)
 	db := &DBStub{}
 	ExecWith(db, sqlizer)
 	assert.Equal(t, sqlStr, db.LastExecSql)
