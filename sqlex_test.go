@@ -3,6 +3,7 @@ package sqlex
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -55,6 +56,13 @@ var sqlizer = Select("test")
 var sqlStr = "SELECT test"
 
 func TestExecWith(t *testing.T) {
+	db := &DBStub{}
+	ExecWith(db, sqlizer)
+	assert.Equal(t, sqlStr, db.LastExecSql)
+}
+
+func TestSetLogger(t *testing.T) {
+	SetLogger(os.Stdout)
 	db := &DBStub{}
 	ExecWith(db, sqlizer)
 	assert.Equal(t, sqlStr, db.LastExecSql)
