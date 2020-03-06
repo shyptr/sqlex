@@ -16,6 +16,7 @@ type updateData struct {
 	Prefixes          []Sqlex
 	Table             string
 	SetClauses        []setClause
+	DirectSet         []string // use to update a set a.num=a.num+1 where a.id=1
 	WhereParts        []Sqlex
 	OrderBys          []string
 	Limit             string
@@ -78,8 +79,8 @@ func (d *updateData) ToSql() (sqlStr string, args []interface{}, err error) {
 	sql.WriteString(d.Table)
 
 	sql.WriteString(" SET ")
-	setSqls := make([]string, len(d.SetClauses))
-	for i, setClause := range d.SetClauses {
+	setSqls := make([]string, 0, len(d.SetClauses)+len(d.DirectSet))
+	for _, setClause := range d.SetClauses {
 		var valSql string
 		if vs, ok := setClause.value.(Sqlex); ok {
 			vsql, vargs, err := vs.ToSql()
@@ -92,7 +93,10 @@ func (d *updateData) ToSql() (sqlStr string, args []interface{}, err error) {
 			valSql = "?"
 			args = append(args, setClause.value)
 		}
-		setSqls[i] = fmt.Sprintf("%s = %s", setClause.column, valSql)
+		setSqls = append(setSqls, fmt.Sprintf("%s = %s", setClause.column, valSql))
+	}
+	for _, set := range d.DirectSet {
+		setSqls = append(setSqls, set)
 	}
 	sql.WriteString(strings.Join(setSqls, ", "))
 
@@ -201,6 +205,13 @@ func (b UpdateBuilder) Table(table string) UpdateBuilder {
 // Set adds SET clauses to the query.
 func (b UpdateBuilder) Set(column string, value interface{}) UpdateBuilder {
 	return builder.Append(b, "SetClauses", setClause{column: column, value: value}).(UpdateBuilder)
+}
+
+// Set adds to the query.
+//
+// use to update a set num=num+1 where id=1
+func (b UpdateBuilder) DirectSet(set string) UpdateBuilder {
+	return builder.Append(b, "DirectSet", set).(UpdateBuilder)
 }
 
 // SetMap is a convenience method which calls .Set for each key/value pair in clauses.

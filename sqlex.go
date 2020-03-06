@@ -90,7 +90,7 @@ func SetLogger(output io.Writer) {
 }
 
 func info(msg string) {
-	_, file, line, ok := runtime.Caller(10)
+	_, file, line, ok := runtime.Caller(3)
 	if !ok {
 		log.Println(msg)
 		return
