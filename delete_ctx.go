@@ -6,7 +6,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/unrotten/builder"
+	"github.com/shyptr/builder"
 )
 
 func (d *deleteData) ExecContext(ctx context.Context) (sql.Result, error) {

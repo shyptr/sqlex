@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 
-	"github.com/unrotten/builder"
+	"github.com/shyptr/builder"
 )
 
 func init() {

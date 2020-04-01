@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/unrotten/builder"
+	"github.com/shyptr/builder"
 )
 
 type selectData struct {

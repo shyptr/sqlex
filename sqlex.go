@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/rs/zerolog"
-	"github.com/unrotten/builder"
+	"github.com/shyptr/builder"
 	"io"
 	"os"
 	"strings"
