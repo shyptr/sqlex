@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 )
 
 type part struct {
@@ -33,44 +34,21 @@ func (p part) ToSql() (sql string, args []interface{}, err error) {
 var noSql = errors.New("there is non sqlStr from toSql()")
 
 func appendToSql(parts []Sqlex, w io.Writer, sep string, args []interface{}) ([]interface{}, error) {
-	build := func(b Sqlex) (err error) {
-		baseSql, baseArgs, err := b.ToSql()
+	var sqlArray []string
+	for _, part := range parts {
+		sql, arg, err := part.ToSql()
 		if err != nil {
-			return err
-		}
-		if baseSql == "" {
-			return noSql
-		}
-		_, err = io.WriteString(w, baseSql)
-		if err != nil {
-			return
-		}
-		args = append(args, baseArgs...)
-		return
-	}
-	var skip bool
-	if err := build(parts[0]); err != nil {
-		if err == noSql {
-			skip = true
-		} else {
 			return nil, err
 		}
+		if sql == "" {
+			continue
+		}
+		sqlArray = append(sqlArray, sql)
+		args = append(args, arg...)
 	}
-	for _, part := range parts[1:] {
-		if !skip {
-			if _, err := io.WriteString(w, sep); err != nil {
-				return nil, err
-			}
-		} else {
-			skip = false
-		}
-		if err := build(part); err != nil {
-			if err == noSql {
-				skip = true
-			} else {
-				return nil, err
-			}
-		}
+	_, err := io.WriteString(w, strings.Join(sqlArray, sep))
+	if err != nil {
+		return nil, err
 	}
 	return args, nil
 }
