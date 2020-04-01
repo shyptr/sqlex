@@ -2,7 +2,7 @@ module github.com/shyptr/sqlex
 
 go 1.14
 
-require github.com/shyptr/builder v1.0.6
+require github.com/shyptr/builder v1.0.7
 
 require github.com/rs/zerolog v1.18.0
 
