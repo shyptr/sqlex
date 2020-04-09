@@ -7,35 +7,9 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/shyptr/builder"
-	"io"
-	"os"
 	"strings"
-	"time"
 )
-
-var logger zerolog.Logger
-
-func init() {
-	var logOutPut = zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
-	logOutPut.FormatLevel = func(i interface{}) string {
-		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
-	}
-	logOutPut.FormatMessage = func(i interface{}) string {
-		if i != nil {
-			return fmt.Sprintf("***%s****\n", i)
-		}
-		return "\n"
-	}
-	logOutPut.FormatFieldName = func(i interface{}) string {
-		return fmt.Sprintf("%s:", i)
-	}
-	logOutPut.FormatFieldValue = func(i interface{}) string {
-		return fmt.Sprintf("%s\n", i)
-	}
-	logger = zerolog.New(logOutPut).With().Timestamp().Logger()
-}
 
 // Sqlex is the interface that wraps the ToSql method.
 //
@@ -103,30 +77,6 @@ type stdsqlRunner struct {
 	StdSql
 }
 
-func SetLogger(output io.Writer) {
-	logOutPut := zerolog.ConsoleWriter{Out: output, TimeFormat: time.RFC3339}
-	logOutPut.FormatLevel = func(i interface{}) string {
-		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
-	}
-	logOutPut.FormatMessage = func(i interface{}) string {
-		if i != nil {
-			return fmt.Sprintf("***%s****\n", i)
-		}
-		return "\n"
-	}
-	logOutPut.FormatFieldName = func(i interface{}) string {
-		return fmt.Sprintf("%s:", i)
-	}
-	logOutPut.FormatFieldValue = func(i interface{}) string {
-		return fmt.Sprintf("%s\n", i)
-	}
-	logger = zerolog.New(logOutPut).With().Timestamp().Logger()
-}
-
-func info(sql string, args []interface{}) {
-	logger.Info().Caller(4).Str("query", sql).Interface("args ", args).Send()
-}
-
 func (r *stdsqlRunner) QueryRow(query string, args ...interface{}) RowScanner {
 	return r.StdSql.QueryRow(query, args...)
 }
@@ -153,7 +103,6 @@ func ExecWith(db Execer, s Sqlex) (res sql.Result, err error) {
 	if err != nil {
 		return
 	}
-	info(query, args)
 	return db.Exec(query, args...)
 }
 
@@ -163,14 +112,12 @@ func QueryWith(db Queryer, s Sqlex) (rows *sql.Rows, err error) {
 	if err != nil {
 		return
 	}
-	info(query, args)
 	return db.Query(query, args...)
 }
 
 // QueryRowWith QueryRows the SQL returned by s with db.
 func QueryRowWith(db QueryRower, s Sqlex) RowScanner {
 	query, args, err := s.ToSql()
-	info(query, args)
 	return &Row{RowScanner: db.QueryRow(query, args...), err: err}
 }
 

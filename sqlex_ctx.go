@@ -74,7 +74,6 @@ func ExecContextWith(ctx context.Context, db ExecerContext, s Sqlex) (res sql.Re
 	if err != nil {
 		return
 	}
-	info(query, args)
 	return db.ExecContext(ctx, query, args...)
 }
 
@@ -84,13 +83,11 @@ func QueryContextWith(ctx context.Context, db QueryerContext, s Sqlex) (rows *sq
 	if err != nil {
 		return
 	}
-	info(query, args)
 	return db.QueryContext(ctx, query, args...)
 }
 
 // QueryRowContextWith QueryRowContexts the SQL returned by s with db.
 func QueryRowContextWith(ctx context.Context, db QueryRowerContext, s Sqlex) RowScanner {
 	query, args, err := s.ToSql()
-	info(query, args)
 	return &Row{RowScanner: db.QueryRowContext(ctx, query, args...), err: err}
 }
