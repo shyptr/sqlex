@@ -328,6 +328,16 @@ func (b SelectBuilder) Where(pred interface{}, args ...interface{}) SelectBuilde
 	return builder.Append(b, "WhereParts", newWherePart(pred, args...)).(SelectBuilder)
 }
 
+func (b SelectBuilder) WhereExpr(expr ...Sqlex) SelectBuilder {
+	if len(expr) == 0 {
+		return b
+	}
+	for _, e := range expr {
+		b = builder.Append(b, "WhereParts", newWherePart(e)).(SelectBuilder)
+	}
+	return b
+}
+
 // GroupBy adds GROUP BY expressions to the query.
 func (b SelectBuilder) GroupBy(groupBys ...string) SelectBuilder {
 	return builder.Extend(b, "GroupBys", groupBys).(SelectBuilder)

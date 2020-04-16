@@ -237,6 +237,16 @@ func (b UpdateBuilder) Where(pred interface{}, args ...interface{}) UpdateBuilde
 	return builder.Append(b, "WhereParts", newWherePart(pred, args...)).(UpdateBuilder)
 }
 
+func (b UpdateBuilder) WhereExpr(expr ...Sqlex) UpdateBuilder {
+	if len(expr) == 0 {
+		return b
+	}
+	for _, e := range expr {
+		b = builder.Append(b, "WhereParts", newWherePart(e)).(UpdateBuilder)
+	}
+	return b
+}
+
 // OrderBy adds ORDER BY expressions to the query.
 func (b UpdateBuilder) OrderBy(orderBys ...string) UpdateBuilder {
 	return builder.Extend(b, "OrderBys", orderBys).(UpdateBuilder)

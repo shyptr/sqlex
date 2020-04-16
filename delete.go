@@ -143,6 +143,16 @@ func (b DeleteBuilder) Where(pred interface{}, args ...interface{}) DeleteBuilde
 	return builder.Append(b, "WhereParts", newWherePart(pred, args...)).(DeleteBuilder)
 }
 
+func (b DeleteBuilder) WhereExpr(expr ...Sqlex) DeleteBuilder {
+	if len(expr) == 0 {
+		return b
+	}
+	for _, e := range expr {
+		b = builder.Append(b, "WhereParts", newWherePart(e)).(DeleteBuilder)
+	}
+	return b
+}
+
 // OrderBy adds ORDER BY expressions to the query.
 func (b DeleteBuilder) OrderBy(orderBys ...string) DeleteBuilder {
 	return builder.Extend(b, "OrderBys", orderBys).(DeleteBuilder)
